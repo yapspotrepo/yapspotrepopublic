@@ -8,3 +8,4 @@ The way the website works is you can make groups focused on a particular theme, 
 It took me about 1 week to make it.  The stack is Django, Vue.js, Bootstrap (css).  It is deployed on AWS.
 
 Yay!
+
