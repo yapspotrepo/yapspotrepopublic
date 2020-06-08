@@ -1,0 +1,94 @@
+{% extends "yap/base.html" %}
+{% block content %}
+
+<h1 class="text-center">Groups -- Member</h1>
+<hr>
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert {% if message.tags %} {{ message.tags }} {% endif %} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %}
+{% endif %}
+
+<div class="text-center">
+	<h1>{{ this_profile }}</h1>
+	<img src="{{ this_profile_avatar_url }}" class="avatar-photo profile-avatar" >
+</div>
+<br><br>
+
+<div class="text-center">
+	{% if request.user.is_authenticated and request.user.profile == this_profile %}
+		<a href="{% url 'groupcreate' %}" class="btn btn-primary inline-link" >Create Group <i class="fas fa-plus-circle"></i></a>
+	{% endif %}
+
+	<a href="{% url 'profilegroups' profile_id=this_profile.pk %}" class="inline-link"><i class="fas fa-users"></i> All Groups</a>
+	<a href="{% url 'profilegroupsadmin' profile_id=this_profile.pk %}" class="inline-link"><i class="fas fa-users"></i> Groups -- Hosting</a>
+	<span class="inline-link-selected"><i class="fas fa-users"></i> Groups -- Member</span>
+	<a href="{% url 'grouplist' %}" class="inline-link"><i class="fas fa-users"></i> Find Groups</a>
+	<a href="{% url 'profile' profile_id=this_profile.pk %}" class="inline-link"><i class="fas fa-user-circle"></i> Back to Profile</a>
+</div>
+
+<hr>
+
+<div id="group-div-container">
+	<yapgrouptemplate
+		v-bind:all_groups_json="all_groups_json"
+	></yapgrouptemplate>
+</div>
+
+
+{% if all_groups.has_other_pages %}
+	<br>
+	<nav>
+	  <ul class="pagination justify-content-center">
+
+	    {% if all_groups.has_previous %}
+	      <li class="page-item">
+	      	<a href="?page={{ all_groups.previous_page_number }}" class="page-link">&laquo;</a>
+	      </li>
+	    {% else %}
+	      <li class="page-item disabled">
+	      	<span class="page-link">&laquo;</span>
+	      </li>
+	    {% endif %}
+
+	    {% for i in all_groups.paginator.page_range %}
+	      {% if all_groups.number == i %}
+	        <li class="page-item active">
+	        	<span class="page-link">{{ i }}</span>
+	        </li>
+	      {% else %}
+	        <li class="page-item"><a href="?page={{ i }}" class="page-link">{{ i }}</a></li>
+	      {% endif %}
+	    {% endfor %}
+
+	    {% if all_groups.has_next %}
+	      <li class="page-item">
+	      	<a href="?page={{ all_groups.next_page_number }}" class="page-link">&raquo;</a>
+	      </li>
+	    {% else %}
+	      <li class="page-item disabled">
+	      	<span class="page-link">&raquo;</span>
+	      </li>
+
+	    {% endif %}
+	  </ul>
+	</nav>
+{% endif %}
+
+
+<script>
+	new Vue({
+	  el: '#group-div-container',
+	  data: {
+	    all_groups_json: {{ all_groups_json|safe }}
+	  },
+	})
+</script>
+
+{% endblock %}

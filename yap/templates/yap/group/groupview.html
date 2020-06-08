@@ -1,0 +1,203 @@
+{% extends "yap/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ this_group.name }}{% endblock %}
+
+{% block content %}
+
+<h1 class="text-center">Group</h1>
+<hr>
+
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert {% if message.tags %} {{ message.tags }} {% endif %} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %}
+{% endif %}
+
+
+
+<div class="row">
+	<div class="col-lg-8" >
+
+		<h1>{{ this_group.name }} {% if request.user.profile == this_group.admin %}<i class="fas fa-star text-warning"></i>{% endif %}</h1>
+		<br>
+
+		<b>Host: </b> 
+		<a href="{% url 'profile' profile_id=this_group.admin.pk %}" ><i class="fas fa-user-circle"></i> {{ this_group.admin }}</a>
+		<br>
+
+		<b>Category: </b> 
+		{{ this_group.get_activity_category_display }}
+		<br>
+
+		<b>Language: </b> 
+		{{ this_group.language_primary }}
+		<br>
+
+		<b>Members: </b>
+		{{ this_group.member_count }}
+		{% if request.user.is_authenticated %}
+			<span class="ml-3 text-nowrap">
+				[<a href="{% url 'groupmemberslist' group_id=this_group.pk %}">
+					<i class="fas fa-user-friends"></i> Group Members
+				</a>]
+			</span>
+		{% endif %}
+
+		<br><br>
+		<b>Description:</b> 
+		{{ group_description|safe|linebreaks }}
+		<hr>
+
+
+		{% if request.user.is_authenticated %}
+			{% if user_can_edit_group %}
+				<a href="{% url 'groupedit' group_id=this_group.pk %}" class="btn btn-primary font-weight-bold m-2" >
+					<i class="fas fa-edit"></i> &nbsp;
+					Edit Group
+				</a>
+				<br>
+
+		    	<a href="{% url 'groupconfirmdelete' group_id=this_group.pk %}" class="btn btn-danger font-weight-bold m-2" >
+		    		<i class="fas fa-window-close"></i> &nbsp; 
+		    		Delete Group 
+		    	</a>
+				<br>
+
+				<a href="{% url 'eventcreate' group_id=this_group.pk %}" class="btn btn-primary font-weight-bold m-2">
+					<i class="fas fa-calendar-plus"></i> &nbsp; 
+					Create Event
+				</a>
+				<br>
+
+			{% elif already_in_group %}
+				<form method="post" >
+				    {% csrf_token %}
+					<button type="submit" name="leave_group" class="btn btn-danger" style="font-size: 130%; font-weight: bold;" >
+						<i class="fas fa-user-minus"></i> &nbsp; 
+						Leave Group
+					</button>
+				</form>
+				<br>
+
+			{% else %}
+				<form method="post" >
+				    {% csrf_token %}
+					<button type="submit" name="join_group" class="btn btn-primary" style="font-size: 130%; font-weight: bold;" >
+						<i class="fas fa-user-plus"></i> &nbsp;
+						Join Group
+					</button>
+				</form>
+				<br>
+
+			{% endif %}
+
+		{% endif %}
+
+	</div>
+	<div class="col-lg-4 text-center" >
+
+		<img src="{{ this_group_avatar_url }}" class="avatar-photo group-avatar" >
+		<br><br>
+
+	</div>
+</div>
+
+
+
+{% if not request.user.is_authenticated %}
+	<br>
+	<div style="text-align:center; font-size:150%;">
+		<a href="{% url 'account_login' %}?next={% url 'groupview' group_id=this_group.pk %}" >Login</a>
+		 or 
+		 <a href="{% url 'custom_signup' %}?next={% url 'groupview' group_id=this_group.pk %}" >Signup</a> to join this group.
+	</div>
+	<br>
+{% endif %}
+
+
+<br><br>
+<br><br>
+
+<h3 class="text-center">Share on Social Media:</h3>
+<h5 class="text-center">www.YapStop.com{% url 'groupview' group_id=this_group.pk %}</h5>
+<div class="sharethis-inline-share-buttons"></div>
+
+<br><br>
+
+<hr>
+<h3 style="display:inline;">Upcoming Events ({{upcoming_events_count}})</h3> 
+<a href="{% url 'groupeventslist' group_id=this_group.pk %}" class="inline-link">
+	<i class="fas fa-calendar-alt"></i> 
+	View All Group Events
+</a>
+
+<br><br>
+
+<div id="event-div" >
+	<yapeventtemplate
+		v-bind:all_events_json="all_events_json"
+	></yapeventtemplate>
+</div>
+
+
+
+{% if request.user.is_authenticated %}
+	<br><br><br>
+	<hr>
+	<h3 style="display:inline;">Most Recent Discussion ({{ all_posts_count }} posts)</h3> 
+	<a href="{% url 'groupposts' group_id=this_group.pk %}" class="inline-link"><i class="fas fa-comment-alt-smile"></i> View Discussion Page</a>
+
+	<form method="post">
+		{% csrf_token %}
+		{{ group_post_form|crispy }}
+		<div class="text-right"><button type="submit" name="create_post" class="btn btn-primary" >Submit</button></div>
+	</form>
+	<br>
+
+	<div id="posts-div">
+		<yapposttemplate
+			v-bind:all_posts_json="all_posts_json"
+		></yapposttemplate>
+	</div>
+
+
+	<br><br>
+
+{% endif %}
+<hr>
+<br>
+
+
+<a href="{% url 'grouplist' %}" ><i class="fas fa-backward"></i> Back to Groups</a>
+
+
+<script>
+	new Vue({
+	  el: '#event-div',
+	  data: {
+	    all_events_json: {{ all_events_json|safe }}
+	  },
+	})
+
+	new Vue({
+	  el: '#posts-div',
+	  data: {
+	    all_posts_json: {{ all_posts_json|safe }}
+	  },
+	  mounted: function () {
+		$(".post-container").linkify();
+	  }
+	})
+
+</script>
+
+
+
+{% endblock %}

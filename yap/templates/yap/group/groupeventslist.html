@@ -1,0 +1,88 @@
+{% extends "yap/base.html" %}
+{% block content %}
+
+<h1 class="text-center">Upcoming Group Events</h1>
+<hr>
+<br>
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert {% if message.tags %} {{ message.tags }} {% endif %} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %}
+{% endif %}
+
+<h3><a href="{% url 'groupview' group_id=this_group.pk %}" >{{ this_group.name }}</a></h3>
+
+<b>Host: </b> 
+<a href="{% url 'profile' profile_id=this_group.admin.pk %}" ><i class="fas fa-user-circle"></i> {{ this_group.admin }}</a>
+<br>
+<br>
+<div class="text-center">
+	<span class="inline-link-selected"><i class="fas fa-calendar-alt"></i> Upcoming Group Events</span>
+	<a href="{% url 'groupeventslistpast' group_id=this_group.pk %}" class="inline-link"><i class="fas fa-calendar-alt"></i> Past Group Events</a>
+</div>
+
+<hr>
+<div id="event-div-container" >
+	<yapeventtemplate
+		v-bind:all_events_json="all_events_json"
+	></yapeventtemplate>
+</div>
+
+
+{% if all_events.has_other_pages %}
+	<br>
+	<nav>
+	  <ul class="pagination justify-content-center">
+
+	    {% if all_events.has_previous %}
+	      <li class="page-item">
+	      	<a href="?page={{ all_events.previous_page_number }}" class="page-link">&laquo;</a>
+	      </li>
+	    {% else %}
+	      <li class="page-item disabled">
+	      	<span class="page-link">&laquo;</span>
+	      </li>
+	    {% endif %}
+
+	    {% for i in all_events.paginator.page_range %}
+	      {% if all_events.number == i %}
+	        <li class="page-item active">
+	        	<span class="page-link">{{ i }}</span>
+	        </li>
+	      {% else %}
+	        <li class="page-item"><a href="?page={{ i }}" class="page-link">{{ i }}</a></li>
+	      {% endif %}
+	    {% endfor %}
+
+	    {% if all_events.has_next %}
+	      <li class="page-item">
+	      	<a href="?page={{ all_events.next_page_number }}" class="page-link">&raquo;</a>
+	      </li>
+	    {% else %}
+	      <li class="page-item disabled">
+	      	<span class="page-link">&raquo;</span>
+	      </li>
+
+	    {% endif %}
+	  </ul>
+	</nav>
+{% endif %}
+
+
+<script>
+	new Vue({
+	  el: '#event-div-container',
+	  data: {
+	    all_events_json: {{ all_events_json|safe }}
+	  },
+	})
+</script>
+
+
+{% endblock %}

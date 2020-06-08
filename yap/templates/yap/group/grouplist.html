@@ -1,0 +1,129 @@
+{% extends "yap/base.html" %}
+{% load crispy_forms_tags %}
+{% load custom_tags %}
+
+{% block content %}
+
+<h1 class="text-center">Find Groups</h1>
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert {% if message.tags %} {{ message.tags }} {% endif %} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %}
+{% endif %}
+<br>
+
+
+<div class="row" >
+	<div class="col-lg-6" >
+		{% if request.user.is_authenticated %}
+			<a href="{% url 'groupcreate' %}" class="btn btn-primary" style="margin-right: 30px;">
+				<i class="fas fa-plus-circle"></i> &nbsp; 
+				Create Group 
+			</a>
+			<a href="{% url 'profilegroups' profile_id=request.user.pk %}" class="inline-link"><i class="fas fa-users"></i> My Groups</a>
+		{% endif %}
+	</div>
+	<div class="col-lg-6 text-right" >
+
+		<form method="get">
+		    <div class="form-row">
+		      <div class="form-group col-md-9 mb-0 text-right">
+		        	{{ group_search_form.search_term|as_crispy_field }}
+		      </div>
+		      <div class="form-group col-md-3 mb-0 text-left">
+	      			<button type="submit" name="search_form" class="btn btn-primary font-weight-bold px-3 py-2" >Search</button>
+		      </div>
+		    </div>
+		</form>
+
+	</div>
+</div>
+
+
+<hr>
+
+<div>
+	<form method="get">
+	    <div class="form-row">
+	      <div class="form-group col-md-5 mb-0">
+	        	{{ group_filter_form.activity_category|as_crispy_field }}
+	      </div>
+	      <div class="form-group col-md-5 mb-0">
+	            {{ group_filter_form.language_primary|as_crispy_field }}
+	      </div>
+	      <div class="form-group col-md-2 mb-0 text-center">
+		      	<br>
+      			<button type="submit" name="filter_form" class="btn btn-primary font-weight-bold px-3 py-2" >Filter</button>
+	      </div>
+	    </div>
+
+	</form>
+</div>
+
+<hr>
+
+
+<div id="group-div-container">
+	<yapgrouptemplate
+		v-bind:all_groups_json="all_groups_json"
+	></yapgrouptemplate>
+</div>
+
+
+
+{% if all_groups.has_other_pages %}
+	<br>
+	<nav>
+	  <ul class="pagination justify-content-center">
+
+	    {% if all_groups.has_previous %}
+	      <li class="page-item">
+	      	<a href="?{% url_replace request 'page' all_groups.previous_page_number %}" class="page-link">&laquo;</a>
+	      </li>
+	    {% else %}
+	      <li class="page-item disabled">
+	      	<span class="page-link">&laquo;</span>
+	      </li>
+	    {% endif %}
+
+	    {% for i in all_groups.paginator.page_range %}
+	      {% if all_groups.number == i %}
+	        <li class="page-item active">
+	        	<span class="page-link">{{ i }}</span>
+	        </li>
+	      {% else %}
+	        <li class="page-item"><a href="?{% url_replace request 'page' i %}" class="page-link">{{ i }}</a></li>
+	      {% endif %}
+	    {% endfor %}
+
+	    {% if all_groups.has_next %}
+	      <li class="page-item">
+	      	<a href="?{% url_replace request 'page' all_groups.next_page_number %}" class="page-link">&raquo;</a>
+	      </li>
+	    {% else %}
+	      <li class="page-item disabled">
+	      	<span class="page-link">&raquo;</span>
+	      </li>
+
+	    {% endif %}
+	  </ul>
+	</nav>
+{% endif %}
+
+
+<script>
+	new Vue({
+	  el: '#group-div-container',
+	  data: {
+	    all_groups_json: {{ all_groups_json|safe }}
+	  },
+	})
+</script>
+
+{% endblock %}

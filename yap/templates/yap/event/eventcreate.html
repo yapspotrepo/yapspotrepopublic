@@ -1,0 +1,120 @@
+{% extends "yap/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<h1 class="text-center">Create Event</h1>
+<hr>
+<br>
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert {% if message.tags %} {{ message.tags }} {% endif %} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %}
+{% endif %}
+
+
+<h3>Group -- {{ this_group }}</h3>
+<br><br>
+
+
+
+<div style="background-color: rgba(0, 0, 0, 0.05); border:1px solid grey; padding:10px" >
+	{% include "yap/event/eventinfo.html" %}
+</div>
+
+
+
+<form method="post" enctype="multipart/form-data">
+	{% csrf_token %}
+	{{ event_form|crispy }}
+
+	<br>
+	<button type="submit" class="btn btn-primary" >Save</button>
+	<a href="{% url 'eventlist' %}" style="margin-left:20px;" ><i class="fas fa-backward"></i> Back</a>
+
+</form>
+
+<script>
+	$(document).ready(function() {
+		$(function () {
+		  $(".datetimeinput").datetimepicker({
+		  	format:'Y-m-d H:i',
+			allowTimes:[
+			  '00:00', '00:30', 
+			  '01:00', '01:30', 
+			  '02:00', '02:30', 
+			  '03:00', '03:30', 
+			  '04:00', '04:30', 
+			  '05:00', '05:30', 
+			  '06:00', '06:30', 
+			  '07:00', '07:30', 
+			  '08:00', '08:30', 
+			  '09:00', '09:30', 
+			  '10:00', '10:30', 
+			  '11:00', '11:30', 
+			  '12:00', '12:30', 
+			  '13:00', '13:30', 
+			  '14:00', '14:30', 
+			  '15:00', '15:30', 
+			  '16:00', '16:30', 
+			  '17:00', '17:30', 
+			  '18:00', '18:30', 
+			  '19:00', '19:30', 
+			  '20:00', '20:30', 
+			  '21:00', '21:30', 
+			  '22:00', '22:30', 
+			  '23:00', '23:30', 
+			]
+
+		  });
+		});
+	});
+
+   //  formatTime:'g:iA',
+   //  format: 'M d Y h:i A'
+
+
+
+
+var yes_selection = document.getElementById("id_use_jitsi_1");
+var no_selection = document.getElementById("id_use_jitsi_2");
+var event_url = document.getElementById("div_id_event_url");
+
+yes_selection.addEventListener('change', function() {
+    if(yes_selection.checked) {
+        event_url.style.display = "none";
+    }
+});
+
+no_selection.addEventListener('change', function() {
+    if(no_selection.checked) {
+        event_url.style.display = "inline";
+    }
+});
+
+$(document).ready(function() {
+    if(!no_selection.checked) {
+	    event_url.style.display = "none";
+	}
+});
+
+</script>
+
+<style>
+.form-group {
+	margin: 35px 0px !important;
+}
+
+label {
+	font-weight: bold;
+}
+</style>
+
+
+{% endblock %}

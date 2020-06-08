@@ -1,0 +1,235 @@
+{% extends "yap/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ this_event.name }}{% endblock %}
+
+
+{% block content %}
+
+<h1 class="text-center">Event</h1>
+<hr>
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert {% if message.tags %} {{ message.tags }} {% endif %} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %}
+{% endif %}
+
+
+<div class="row">
+	<div class="col-lg-8" >
+
+		<h1>{{ this_event.name }} {% if request.user.profile == this_event.admin %}<i class="fas fa-star text-warning"></i>{% endif %}</h1>
+		<h5>{{ this_event.start_time }} - {{ this_event.end_time|date:"f a" }}</h5>
+		<p class="text-info font-weight-bold">{{ time_until_event_start }}</p>
+		<br>
+
+		<b>Group: </b> 
+		<a href="{% url 'groupview' group_id=this_event.group.pk %}" ><i class="fas fa-users"></i> {{ this_event.group }}</a>
+		<br>
+
+
+		<b>Host: </b> 
+		<a href="{% url 'profile' profile_id=this_event.admin.pk %}" ><i class="fas fa-user-circle"></i> {{ this_event.admin }}</a>
+		<br>
+
+
+		<b>Category: </b> 
+		{{ this_event.get_activity_category_display }}
+		<br>
+
+
+		<b>Language: </b> 
+		{{ this_event.language_primary }}
+		<br>
+
+
+		<b>Attendees: </b>
+		{{ this_event.attendee_count }} <span class="ml-3 text-nowrap">(max {{ this_event.maximum_attendee_count }})</span>
+		{% if request.user.is_authenticated %}
+			<span class="ml-3 text-nowrap">
+				[<a href="{% url 'eventattendeelist' event_id=this_event.pk %}" >
+					<i class="fas fa-user-friends"></i> Event Attendees
+				</a>]
+			</span>
+		{% endif %}
+		<br>
+
+		{% if user_can_edit_event or already_rsvped %}
+			<b>Video Chat URL:</b> 
+			{% if this_event_videochat_url %}{{ this_event_videochat_url }}{% else %}No URL provided yet.{% endif %}
+			<br>
+		{% endif %}
+
+		<br>
+		<b>Description:</b> 
+		{{ event_description|safe|linebreaks }}
+		<hr>
+
+
+		{% if request.user.is_authenticated %}
+			{% if user_can_edit_event %}
+				<a href="{% url 'eventedit' event_id=this_event.pk %}" class="btn btn-primary font-weight-bold m-2"  >
+					<i class="fas fa-calendar-edit"></i> &nbsp; 
+					Edit Event
+				</a>
+				<br>
+
+		    	<a href="{% url 'eventconfirmdelete' event_id=this_event.pk %}" class="btn btn-danger font-weight-bold m-2" >
+		    		<i class="fas fa-window-close"></i> &nbsp; 
+		    		Delete Event 
+		    	</a>
+
+			{% elif already_rsvped %}
+				<form method="post" >
+				    {% csrf_token %}
+					<button type="submit" name="cancel_rsvp" class="btn btn-danger font-weight-bold m-2" >
+						<i class="fas fa-calendar-times"></i> &nbsp; 
+						Cancel RSVP
+					</button>
+				</form>
+
+			{% else %}
+				<form method="post" >
+				    {% csrf_token %}
+					<button type="submit" name="rsvp_for_event" class="btn btn-primary font-weight-bold m-2" >
+						<i class="fas fa-calendar-plus"></i> &nbsp; 
+						RSVP
+					</button>
+				</form>
+
+			{% endif %}
+		{% endif %}
+
+		<br><br><br>
+
+		<div class="text-center" >
+			{% if can_enter_videochat_now == "current" and this_event_videochat_url %}
+				<a href="{{ this_event_videochat_url }}" class="btn btn-primary font-weight-bold m-2 btn-lg" target="_blank">
+					<i class="fas fa-video"></i> &nbsp; 
+					Open Video Chat
+				</a>
+				<br>
+				<strong>Join the videochat!</strong>
+
+			{% elif can_enter_videochat_now == "current" and not this_event_videochat_url %}
+				<a href="#" class="btn btn-primary disabled font-weight-bold m-2 btn-lg" disabled>
+					<i class="fas fa-ban"></i> &nbsp; 
+					Open Video Chat
+				</a>
+				<br>
+				<strong>No videochat URL provided yet.</strong>
+
+			{% elif can_enter_videochat_now == "early" %}
+				<a href="#" class="btn btn-primary disabled font-weight-bold m-2 btn-lg" disabled>
+					<i class="fas fa-ban"></i> &nbsp; 
+					Open Video Chat
+				</a>
+				<br>
+				<strong>Return to this page 15 minutes before start time to join the video chat.</strong>
+
+			{% elif can_enter_videochat_now == "passed" %}
+				<br>
+				<h2>Event is already passed.</h2>
+
+			{% endif %}
+		</div>
+
+		<br><br><br>
+
+
+
+	</div>
+	<div class="col-lg-4" >
+
+		<img src="{{ this_event_avatar_url }}" class="avatar-photo event-avatar" style="height:300px; max-width: 100%;" >
+		<br><br>
+
+	</div>
+</div>
+
+
+
+
+
+{% if not request.user.is_authenticated %}
+	<br>
+	<div style="text-align:center; font-size:150%;">
+		<a href="{% url 'account_login' %}?next={% url 'eventview' event_id=this_event.pk %}" >Login</a>
+		 or 
+		 <a href="{% url 'custom_signup' %}?next={% url 'eventview' event_id=this_event.pk %}" >Signup</a> to RSVP for this event.
+	</div>
+	<br>
+
+{% endif %}
+
+
+<br><br><br><br>
+<h3 class="text-center">Share on Social Media:</h3>
+<h5 class="text-center">www.YapStop.com{% url 'eventview' event_id=this_event.pk %}</h5>
+<div class="sharethis-inline-share-buttons"></div>
+
+<br><br>
+
+
+{% if request.user.is_authenticated %}
+	<br><br><br>
+	<hr>
+	<h3 style="display:inline;">Most Recent Discussion ({{ all_posts_count }} posts)</h3> 
+	<a href="{% url 'eventposts' event_id=this_event.pk %}" class="inline-link"><i class="fas fa-comment-alt-smile"></i> View Discussion Page</a>
+
+	<form method="post">
+		{% csrf_token %}
+		{{ event_post_form|crispy }}
+		<div class="text-right"><button type="submit" name="create_post" class="btn btn-primary" >Submit</button></div>
+	</form>
+	<br>
+
+	<div id="posts-div">
+		<yapposttemplate
+			v-bind:all_posts_json="all_posts_json"
+		></yapposttemplate>
+	</div>
+
+
+	<br><br>
+
+{% endif %}
+<hr>
+<br>
+
+
+
+
+
+
+
+
+<br><br>
+
+<a href="{% url 'eventlist' %}" ><i class="fas fa-backward"></i> Back to Events</a>
+
+
+
+
+<script>
+	new Vue({
+	  el: '#posts-div',
+	  data: {
+	    all_posts_json: {{ all_posts_json|safe }}
+	  },
+	  mounted: function () {
+		$(".post-container").linkify();
+	  }
+	})
+
+</script>
+
+
+
+{% endblock %}

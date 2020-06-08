@@ -1,0 +1,50 @@
+{% extends "yap/base.html" %}
+{% block content %}
+
+
+  <div class="justify-content-center" style="margin: 0 auto; max-width: 500px;" >
+
+          <h2>Sign Up</h2>
+          <hr>
+
+          {% if messages %}
+              {% for message in messages %}
+                  <div class="alert {% if message.tags %} {{ message.tags }} {% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+              {% endfor %}
+          {% endif %}
+
+          <br>
+          
+          <p>Already have an account? Then please <a href="{% url 'account_login' %}" >sign in</a>.</p>
+
+          <form class="signup" id="signup_form" method="post" action="{% url 'custom_signup' %}">
+                {% csrf_token %}
+
+                <table id="sign-up-table" >
+                    {{ form.as_table }}
+                </table>
+
+                {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                {% endif %}
+
+                <br>
+                <div>
+                    <small>By clicking Sign Up, you agree to our Terms of Service, Privacy Policy and Cookies Policy.
+                    You may receive email or SMS Notifications from us and can opt out any time.</small>
+                </div>
+                <br>
+
+                <button type="submit"  class="btn btn-primary" >Sign Up &raquo;</button>
+
+            </form>
+
+  </div>
+
+
+{% endblock %}

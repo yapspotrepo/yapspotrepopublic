@@ -1,0 +1,103 @@
+{% extends "yap/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<h1 class="text-center">Confirm Deletion of Group</h1>
+<hr>
+
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert {% if message.tags %} {{ message.tags }} {% endif %} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %}
+{% endif %}
+
+
+
+<div class="row">
+	<div class="col-lg-8" >
+
+		<h1>{{ this_group.name }}</h1>
+		<br>
+
+		<b>Host: </b> 
+		<a href="{% url 'profile' profile_id=this_group.admin.pk %}" ><i class="fas fa-user-circle"></i> {{ this_group.admin }}</a>
+		<br>
+
+		<b>Category: </b> 
+		{{ this_group.get_activity_category_display }}
+		<br>
+
+		<b>Primary Language: </b> 
+		{{ this_group.language_primary }}
+		<br>
+
+		<b>Members: </b>
+		{{ this_group.member_count }}
+		{% if request.user.is_authenticated %}[<a href="{% url 'groupmemberslist' group_id=this_group.pk %}"><i class="fas fa-user-friends"></i> Group Members</a>]{% endif %}
+		<br>
+
+		<b>Description:</b> 
+		{{ this_group.description }}
+		<br><br>
+	</div>
+	<div class="col-lg-4 text-center" >
+
+		<img src="{{ this_group_avatar_url }}" class="avatar-photo group-avatar" >
+		<br><br>
+
+	</div>
+</div>
+
+
+
+<div class="text-center" >
+	<br><br>
+	<h3>Are you sure you want to delete this group?  This cannot be undone.</h3>
+
+    <button type="button" class="btn btn-danger font-weight-bold m-2 btn-lg" data-toggle="modal" data-target="#delete_group">
+    	<i class="fas fa-window-close"></i> &nbsp;
+    	Delete Group 
+    </button>
+	<br><br>
+</div>
+
+<div class="modal fade" id="delete_group" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Confirm Delete Group</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="text-align:center;">
+	      	Are you sure you want to delete this group?  This cannot be undone.
+	      	<br><br>
+
+	      	<form method="post" action="{% url 'groupconfirmdelete' group_id=this_group.pk %}" >{% csrf_token %}
+	      		<button class="btn btn-danger" name="delete_group"  style="margin:0 30px; font-weight: bold; width:25%;" type="submit">Yes</button>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+			</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<br><br><br>
+
+<a href="{% url 'groupview' group_id=this_group.pk %}" ><i class="fas fa-backward"></i> Cancel, Back to Group</a>
+
+
+
+
+{% endblock %}

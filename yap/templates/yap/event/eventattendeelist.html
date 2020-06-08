@@ -1,0 +1,50 @@
+{% extends "yap/base.html" %}
+{% block content %}
+
+<h1 class="text-center">Event Attendees</h1>
+<hr>
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert {% if message.tags %} {{ message.tags }} {% endif %} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %}
+{% endif %}
+
+<h1><a href="{% url 'eventview' event_id=this_event.pk %}" >{{ this_event.name }}</a></h1>
+
+<b>Group: </b> 
+<a href="{% url 'groupview' group_id=this_event.group.pk %}" ><i class="fas fa-users"></i> {{ this_event.group }}</a>
+<br>
+
+<b>Host: </b> 
+<a href="{% url 'profile' profile_id=this_event.admin.pk %}" ><i class="fas fa-user-circle"></i> {{ this_event.admin }}</a>
+<br>
+
+<hr>
+
+
+
+<div id="profile-div-container">
+  <yapprofiletemplate
+    v-bind:all_profiles_json="all_profiles_json"
+  ></yapprofiletemplate>
+</div>
+
+
+
+<script>
+  new Vue({
+    el: '#profile-div-container',
+    data: {
+      all_profiles_json: {{ all_profiles_json|safe }}
+    },
+  })
+</script>
+
+
+{% endblock %}

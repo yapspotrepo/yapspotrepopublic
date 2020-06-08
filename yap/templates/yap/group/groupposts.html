@@ -1,0 +1,107 @@
+{% extends "yap/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<h1 class="text-center">Group Discussion</h1>
+<hr>
+
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert {% if message.tags %} {{ message.tags }} {% endif %} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %}
+{% endif %}
+
+<h1><a href="{% url 'groupview' group_id=this_group.pk %}" >{{ this_group.name }}</a></h1>
+
+<b>Host: </b> 
+<a href="{% url 'profile' profile_id=this_group.admin.pk %}" ><i class="fas fa-user-circle"></i> {{ this_group.admin }}</a>
+<br>
+<br>
+
+
+<h3 style="display:inline;">Discussion ({{ all_posts_count }} total posts)</h3> 
+<br><br>
+
+<form method="post">
+	{% csrf_token %}
+	{{ group_post_form|crispy }}
+	<div class="text-right"><button type="submit" name="create_post" class="btn btn-primary" >Submit</button></div>
+</form>
+<br>
+
+<div id="posts-div">
+	<yapposttemplate
+		v-bind:all_posts_json="all_posts_json"
+	></yapposttemplate>
+</div>
+
+
+<hr>
+<br>
+
+
+{% if all_posts.has_other_pages %}
+	<br>
+	<nav>
+	  <ul class="pagination justify-content-center">
+
+	    {% if all_posts.has_previous %}
+	      <li class="page-item">
+	      	<a href="?page={{ all_posts.previous_page_number }}" class="page-link">&laquo;</a>
+	      </li>
+	    {% else %}
+	      <li class="page-item disabled">
+	      	<span class="page-link">&laquo;</span>
+	      </li>
+	    {% endif %}
+
+	    {% for i in all_posts.paginator.page_range %}
+	      {% if all_posts.number == i %}
+	        <li class="page-item active">
+	        	<span class="page-link">{{ i }}</span>
+	        </li>
+	      {% else %}
+	        <li class="page-item"><a href="?page={{ i }}" class="page-link">{{ i }}</a></li>
+	      {% endif %}
+	    {% endfor %}
+
+	    {% if all_posts.has_next %}
+	      <li class="page-item">
+	      	<a href="?page={{ all_posts.next_page_number }}" class="page-link">&raquo;</a>
+	      </li>
+	    {% else %}
+	      <li class="page-item disabled">
+	      	<span class="page-link">&raquo;</span>
+	      </li>
+
+	    {% endif %}
+	  </ul>
+	</nav>
+{% endif %}
+
+
+
+<script>
+
+	new Vue({
+	  el: '#posts-div',
+	  data: {
+	    all_posts_json: {{ all_posts_json|safe }}
+	  },
+	  mounted: function () {
+		$(".post-container").linkify();
+	  }
+	})
+
+</script>
+
+
+
+{% endblock %}

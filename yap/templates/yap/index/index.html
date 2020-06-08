@@ -1,0 +1,359 @@
+{% extends "yap/base.html" %}
+{% load static %}
+
+
+{% block content %}
+
+<h1 class="text-center">Welcome to <span style="font-family: 'Chelsea Market', cursive; font-style: italic;">YapSpot!</span></h1>
+<h5 class="text-center"><i>Online video chat meetups with friends, old and new.</i></h5>
+<br>
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert {% if message.tags %} {{ message.tags }} {% endif %} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %}
+{% endif %}
+
+<hr>
+<video autoplay muted loop id="myVideo" style="width:100%;">
+  <source src="{% static 'yap/indexmedia/videocallvideo.mov' %}" type="video/mp4">
+  Your browser does not support HTML5 video.
+</video>
+
+
+
+
+
+
+<br>
+<hr>
+<br>
+
+
+
+
+
+<div class="text-center">
+	<a href="{% url 'account_login' %}" class="btn btn-primary btn-lg inline-link">Login</a>
+	<a href="{% url 'custom_signup' %}" class="btn btn-primary btn-lg inline-link">Sign Up</a>
+
+	<br><br><br>
+
+	<a href="{% url 'grouplist' %}" class="btn btn-info btn-lg inline-link" >Find a Group</a>
+	<a href="{% url 'eventlist' %}" class="btn btn-info btn-lg inline-link" >Find an Event</a>
+</div>
+
+
+
+
+
+
+<br>
+<hr>
+<br>
+
+
+
+
+
+<h1 class="text-center">How to Join an Event</h1>
+<br><br>
+
+<div class="row" style="max-width:550px; margin: 0 auto;">
+	<div class="col-lg-6 text-center">
+		<img src="{% static 'yap/indexmedia/search.svg' %}" style="max-width:128px;" >
+	</div>
+	<div class="col-lg-6">
+		<table style="height:100%;"><tr><td style="height:100%;">
+			<br>
+			<b>Step 1:</b> <a href="{% url 'custom_signup' %}" >Signup</a> for an account, then <a href="{% url 'eventlist' %}" >find an event</a> about a topic that interests you and RSVP.
+			<br>
+		</td></tr></table>
+	</div>
+</div>
+
+<br><br>
+
+<div class="row" style="max-width:550px; margin: 0 auto;">
+	<div class="col-lg-6 text-center">
+		<img src="{% static 'yap/indexmedia/email.svg' %}" style="max-width:128px;" >
+	</div>
+	<div class="col-lg-6">
+		<table style="height:100%;"><tr><td style="height:100%;">
+			<br>
+			<b>Step 2:</b> Fifteen minutes prior to the start of the event, you will receive an email with a link to the small-group video chat room.  The link will also be available on the event page.
+			<br>
+		</td></tr></table>
+	</div>
+</div>
+
+
+<br><br>
+
+<div class="row" style="max-width:550px; margin: 0 auto;">
+	<div class="col-lg-6 text-center">
+		<img src="{% static 'yap/indexmedia/party.svg' %}" style="max-width:128px;" >
+	</div>
+	<div class="col-lg-6">
+		<table style="height:100%;"><tr><td style="height:100%;">
+			<br>
+			<b>Step 3:</b> Enjoy socializing and discussing a topic of mutual interest with others.
+			<br>
+		</td></tr></table>
+	</div>
+</div>
+
+
+
+
+
+<br><br><br>
+<hr>
+<br><br><br>
+
+
+
+
+
+<h1 class="text-center">How to Create an Event</h1>
+<br><br>
+
+<div class="row" style="max-width:550px; margin: 0 auto;">
+	<div class="col-lg-6 text-center">
+		<img src="{% static 'yap/indexmedia/people.svg' %}" style="max-width:128px;" >
+	</div>
+	<div class="col-lg-6">
+		<table style="height:100%;"><tr><td style="height:100%;">
+			<br>
+			<b>Step 1:</b> <a href="{% url 'custom_signup' %}" >Signup</a> for an account, then create a <strong>group</strong> with a specific theme.  You could discuss books, sports, languages, or whatever interests you.
+			<br>
+		</td></tr></table>
+	</div>
+</div>
+
+<br><br>
+
+<div class="row" style="max-width:550px; margin: 0 auto;">
+	<div class="col-lg-6 text-center">
+		<img src="{% static 'yap/indexmedia/calendar.svg' %}" style="max-width:128px;" >
+	</div>
+	<div class="col-lg-6">
+		<table style="height:100%;"><tr><td style="height:100%;">
+			<br>
+			<b>Step 2:</b> After creating a group, you can create an <strong>event</strong> for the group.  You select the name of the event, as well as the date and time among other details.
+			<br>
+		</td></tr></table>
+	</div>
+</div>
+
+
+<br><br>
+
+<div class="row" style="max-width:550px; margin: 0 auto;">
+	<div class="col-lg-6 text-center">
+		<img src="{% static 'yap/indexmedia/connect.svg' %}" style="max-width:128px;" >
+	</div>
+	<div class="col-lg-6">
+		<table style="height:100%;"><tr><td style="height:100%;">
+			<br>
+			<b>Step 3:</b> Share the event with your friends and anyone else interested.  There are buttons on the event page making it convenient to share the event's URL via email, SMS, or social media.
+			<br>
+		</td></tr></table>
+	</div>
+</div>
+
+<br><br>
+
+<div class="row" style="max-width:550px; margin: 0 auto;">
+	<div class="col-lg-6 text-center">
+		<img src="{% static 'yap/indexmedia/email.svg' %}" style="max-width:128px;" >
+	</div>
+	<div class="col-lg-6">
+		<table style="height:100%;"><tr><td style="height:100%;">
+			<br>
+			<b>Step 4:</b> Fifteen minutes prior to the start of the event, the attendees receive an email with a link to the small-group video chat room.  The link will also be available on the event page.
+			<br>
+		</td></tr></table>
+	</div>
+</div>
+
+<br><br>
+
+<div class="row" style="max-width:550px; margin: 0 auto;">
+	<div class="col-lg-6 text-center">
+		<img src="{% static 'yap/indexmedia/party.svg' %}" style="max-width:128px;" >
+	</div>
+	<div class="col-lg-6">
+		<table style="height:100%;"><tr><td style="height:100%;">
+			<br>
+			<b>Step 5:</b> Enjoy socializing with others.
+			<br>
+		</td></tr></table>
+	</div>
+</div>
+
+
+
+
+
+<br><br><b>
+<hr>
+<br><br><br>
+
+
+
+
+
+<h1 class="text-center">Something For Everyone</h1>
+<br><br>
+
+<div class="row">
+	<div class="col-lg-4 text-center">
+		<img src="{% static 'yap/indexmedia/books.svg' %}" style="max-width:128px;" >
+		<br><br>
+		<p>Book Clubs</p>
+		<br><br>
+	</div>
+	<div class="col-lg-4 text-center">
+		<img src="{% static 'yap/indexmedia/globe.svg' %}" style="max-width:128px;" >
+		<br><br>
+		<p>Languages and Cultures</p>
+		<br><br>
+	</div>
+	<div class="col-lg-4 text-center">
+		<img src="{% static 'yap/indexmedia/paintpalette.svg' %}" style="max-width:128px;" >
+		<br><br>
+		<p>Art / Film / Music</p>
+		<br><br>
+	</div>
+</div>
+
+
+
+<div class="row">
+	<div class="col-lg-4 text-center">
+		<img src="{% static 'yap/indexmedia/soccerball.svg' %}" style="max-width:128px;" >
+		<br><br>
+		<p>Sports</p>
+		<br><br>
+	</div>
+	<div class="col-lg-4 text-center">
+		<img src="{% static 'yap/indexmedia/gamecontroller.svg' %}" style="max-width:128px;" >
+		<br><br>
+		<p>Gaming</p>
+		<br><br>
+	</div>
+	<div class="col-lg-4 text-center">
+		<img src="{% static 'yap/indexmedia/programming.svg' %}" style="max-width:128px;" >
+		<br><br>
+		<p>Technology</p>
+		<br><br>
+	</div>
+</div>
+
+<br><br>
+<h3 class="text-center">And More...</h3>
+
+
+
+
+<br><br><br>
+<hr>
+<br><br>
+
+<h1 class="text-center">Video: How to create a Group and an Event</h1>
+<br>
+<div class="embed-responsive embed-responsive-16by9 text-center">
+	<iframe class="embed-responsive-item" style="border: 1px solid black;" src="https://www.youtube.com/embed/EKpqGXZ8Rd4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+
+
+<br><br>
+<hr>
+<br><br>
+
+
+<h1 class="text-center"><img src="{% static 'yap/indexmedia/questionmark.svg' %}" style="max-width:64px;" > F.A.Q. <img src="{% static 'yap/indexmedia/questionmark.svg' %}" style="max-width:64px;" ></h1>
+<br>
+
+<div>
+	<strong>Where do the online videochat meetups take place? </strong>
+	<p>The host will provide a link to the videochat room.  They may use any available platform such as Zoom, Google Meet, Jitsi Meet, Skype, etc.  <a href="https://meet.jit.si/" target="_blank" >Jitsi Meet</a> is free-to-use and a great choice for those who don&apos;t have a paid account on another platform.</p>
+
+	<br>
+
+	<strong>Can anyone use this to organize online meetups?</strong>
+	<p>Yes, it&apos;s free to use and registration just takes a few seconds.</p>
+
+	<br>
+
+	<strong>Any plans for future feature additions?</strong>
+	<p>Yes, I plan on integrating PayPal so users can host paid events if they want.  Please email hello at yapspot dot com with any feature requests.</p>
+
+
+</div>
+
+
+
+
+<br><br><br>
+<hr>
+<br><br>
+
+
+
+<div class="text-center">
+	<a href="{% url 'account_login' %}" class="btn btn-primary btn-lg inline-link">Login</a>
+	<a href="{% url 'custom_signup' %}" class="btn btn-primary btn-lg inline-link">Sign Up</a>
+
+	<br><br><br>
+
+	<a href="{% url 'grouplist' %}" class="btn btn-info btn-lg inline-link" >Find a Group</a>
+	<a href="{% url 'eventlist' %}" class="btn btn-info btn-lg inline-link" >Find an Event</a>
+</div>
+
+
+<br><br>
+<hr>
+<br>
+
+
+
+<div class="row" >
+	<div class="col-lg-2" >
+	</div>
+
+	<div class="col-lg-2" >
+  	<h5>Legal</h5>
+  	<ul style="list-style-type:none; padding-left: 0;">
+	  	<li><a href="{% url 'tos' %}" >Terms of Service</a></li>
+		<li><a href="{% url 'tos' %}#privacypolicy" >Privacy Policy</a></li>
+	</ul>
+	</div>
+	<div class="col-lg-2" >
+	<h5>Registration</h5>
+	<ul style="list-style-type:none; padding-left: 0;">
+	<li><a href="{% url 'custom_signup' %}" >Sign Up</a></li>
+	<li><a href="{% url 'account_login' %}" >Log In</a></li>
+</ul>
+	</div>
+	<div class="col-lg-2" >
+	<h5>Groups / Events</h5>
+	<ul style="list-style-type:none; padding-left: 0;">
+	<li><a href="{% url 'grouplist' %}" >Find Groups</a></li>
+	<li><a href="{% url 'eventlist' %}" >Find Events</a></li>
+</ul>
+	</div>
+	<div class="col-lg-4" >
+  	YapSpot. &copy; {% now "Y" %}. 
+  	<br>All Rights Reserved.
+	</div>
+
+</div>
+
+{% endblock %}

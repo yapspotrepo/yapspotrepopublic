@@ -1,0 +1,115 @@
+{% extends "yap/base.html" %}
+{% block content %}
+
+<h1 class="text-center">Profile</h1>
+<hr>
+<br>
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert {% if message.tags %} {{ message.tags }} {% endif %} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %}
+{% endif %}
+
+<div class="text-center">
+	<h1>{{ this_profile }}</h1>
+	<br>
+	<img src="{{ this_profile_avatar_url }}" class="avatar-photo profile-avatar" >
+
+	<br><br>
+
+	{% if user_can_edit_profile %}
+		<a href="{% url 'profileavataredit' %}" class="inline-link"><i class="fas fa-user-circle"></i> Edit Profile Avatar</a>
+		<a href="{% url 'profileedit' %}" class="inline-link"><i class="fas fa-user-circle"></i> Edit Profile</a>
+		<a href="{% url 'password_change' %}" class="inline-link"><i class="fas fa-key"></i> Change Password</a>
+		{% if show_email_verification_link %}
+			<a href="{% url 'account_email' %}" class="inline-link"><i class="fas fa-mailbox"></i> Resend Confirmation Email</a>
+		{% endif %}
+		<a href="{% url 'profileevents' %}" class="inline-link"><i class="fas fa-calendar-alt"></i> My Events</a>
+	{% endif %}
+
+	<a href="{% url 'profilegroups' profile_id=this_profile.pk %}" class="inline-link"><i class="fas fa-users"></i> {% if request.user.profile == this_profile %}My{% endif %} Groups</a>
+
+</div>
+
+<br>
+<br>
+
+<table class="table table-hover" >
+	<tr>
+		<th>
+			Time Zone: 
+		</th>
+		<td>
+			{{ this_profile.time_zone }}
+		</td>
+	</tr>
+	<tr>
+		<th>
+			Preferred Language: 
+		</th>
+		<td>
+			{{ this_profile.language_preferred }}
+		</td>
+	</tr>
+	<tr>
+		<th>
+			City: 
+		</th>
+		<td>
+			{{ this_profile.city }}
+		</td>
+	</tr>
+	<tr>
+		<th>
+			Region / State: 
+		</th>
+		<td>
+			{{ this_profile.region }}
+		</td>
+	</tr>
+	<tr>
+		<th>
+			Country: 
+		</th>
+		<td>
+			{{ this_profile.get_country_display }}
+		</td>
+	</tr>
+	<tr>
+		<th>
+			Interests: 
+		</th>
+		<td>
+			{{ this_profile.interests }}
+		</td>
+	</tr>
+
+	{% if user_can_edit_profile %}
+		<tr>
+			<th>
+				Accept Email Notifications: 
+			</th>
+			<td>
+				{% if this_profile.accept_email %}Yes{% else %}No{% endif %}
+			</td>
+		</tr>
+		<tr>
+			<th>
+				Accept SMS Notifications: 
+			</th>
+			<td>
+				{% if this_profile.accept_sms %}Yes{% else %}No{% endif %}
+			</td>
+		</tr>
+	{% endif %}
+
+</table>
+
+
+{% endblock %}

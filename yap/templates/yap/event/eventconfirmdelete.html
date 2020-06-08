@@ -1,0 +1,131 @@
+{% extends "yap/base.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+<h1 class="text-center">Confirm Deletion of Event</h1>
+<hr>
+
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert {% if message.tags %} {{ message.tags }} {% endif %} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %}
+{% endif %}
+
+
+<div class="row">
+	<div class="col-lg-8" >
+
+		<h1>{{ this_event.name }}</h1>
+		<h5>{{ this_event.start_time }} - {{ this_event.end_time|date:"f a" }}</h5>
+		<br>
+
+		<b>Group: </b> 
+		<a href="{% url 'groupview' group_id=this_event.group.pk %}" ><i class="fas fa-users"></i> {{ this_event.group }}</a>
+		<br>
+
+
+		<b>Host: </b> 
+		<a href="{% url 'profile' profile_id=this_event.admin.pk %}" ><i class="fas fa-user-circle"></i> {{ this_event.admin }}</a>
+		<br>
+
+
+		<b>Category: </b> 
+		{{ this_event.get_activity_category_display }}
+		<br>
+
+
+		<b>Primary Language: </b> 
+		{{ this_event.language_primary }}
+		<br>
+
+
+		<b>Attendees: </b>
+		{{ this_event.attendee_count }} (max {{ this_event.maximum_attendee_count }})
+		 &nbsp;&nbsp; 
+		{% if request.user.is_authenticated %}[<a href="{% url 'eventattendeelist' event_id=this_event.pk %}"><i class="fas fa-user-friends"></i> Event Attendees</a>]{% endif %}
+		<br>
+
+
+		{% if user_can_edit_event or already_rsvped %}
+			<b>Video Chat URL:</b> https://meet.jit.si/{{ this_event.event_videochat_room_name }}
+			<br>
+		{% endif %}
+
+
+		<b>Description:</b> 
+		{{ this_event.description }}
+		<br><br>
+
+
+	</div>
+	<div class="col-lg-4" >
+
+		<img src="{{ this_event_avatar_url }}" class="avatar-photo event-avatar" style="height:300px; max-width: 100%;" >
+		<br><br>
+
+	</div>
+</div>
+
+
+
+
+
+<div class="text-center" >
+	<br><br>
+	<h3>Are you sure you want to delete this event?  This cannot be undone.</h3>
+
+    <button type="button" class="btn btn-danger font-weight-bold m-2 btn-lg" data-toggle="modal" data-target="#delete_event">
+    	<i class="fas fa-window-close"></i> &nbsp; 
+    	Delete Event 
+    </button>
+	<br><br>
+</div>
+
+
+<div class="modal fade" id="delete_event" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Confirm Delete Event</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="text-align:center;">
+	      	Are you sure you want to delete this event?  This cannot be undone.
+	      	<br><br>
+
+	      	<form method="post" action="{% url 'eventconfirmdelete' event_id=this_event.pk %}" >{% csrf_token %}
+	      		<button class="btn btn-danger" name="delete_event"  style="margin:0 30px; font-weight: bold; width:25%;" type="submit">Yes</button>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+			</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+<br><br>
+
+<a href="{% url 'eventview' event_id=this_event.pk %}" ><i class="fas fa-backward"></i> Cancel, Back to Event</a>
+
+
+
+
+
+{% endblock %}

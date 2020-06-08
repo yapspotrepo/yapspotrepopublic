@@ -1,0 +1,25 @@
+{% extends "yap/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Verify Your E-mail Address" %}{% endblock %}
+
+{% block content %}
+
+	    <h1>{% trans "Verify Your E-mail Address" %}</h1>
+	    <hr>
+
+		{% if messages %}
+		    {% for message in messages %}
+		    <div class="alert {% if message.tags %} {{ message.tags }} {% endif %} alert-dismissible fade show" role="alert">
+		      {{ message }}
+		      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+		        <span aria-hidden="true">&times;</span>
+		      </button>
+		    </div>
+		    {% endfor %}
+		{% endif %}
+
+	    <p>{% blocktrans %}We have sent an e-mail to you for verification. Follow the link provided to finalize the signup process. Please contact us if you do not receive it within a few minutes.{% endblocktrans %}</p>
+
+{% endblock %}
