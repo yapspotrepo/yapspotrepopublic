@@ -22,6 +22,6 @@ python-magic
 libmagic
 django-recaptcha
 python-decouple
-requests==2.23.0
+requests==2.31.0
 numpy
 django-ses
